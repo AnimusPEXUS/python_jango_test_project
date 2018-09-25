@@ -1,0 +1,70 @@
+{% extends "index.html" %}
+
+{% block main_part %}
+<div class="individual-sub-control">
+	<form method="post" action="/{{ i.login | escape }}/unsubscribe">
+		<input type="submit" title="unsubscribe" />
+	</form>
+	<form method="post" action="/{{ i.login | escape }}/subscribe">
+		<input type="submit" title="unsubscribe" />
+	</form>
+</div>
+
+<div class="subscription-list">
+<table>
+{% for i in subscriptions %}
+
+<tr>
+<td>{{ i.name | escape }}</td>
+<td>
+	<form method="post" action="/{{ i.login | escape }}/unsubscribe">
+		<input type="submit" title="unsubscribe" />
+	</form>
+</td>
+</tr>
+
+{% endif %}
+</table>
+</div>
+
+<div class="news-feed">
+<table>
+ <tr>
+  <td>
+
+   <table>
+    <tr>
+     <td>
+		{{ i.title }}
+     </td>
+     <td>
+
+     </td>
+    </tr>
+    <tr>
+     <td>
+		{{ i.date }} {{ i.name }}
+     </td>
+     <td>
+          	
+	  <form method="post" action="/{{ i.login | escape }}/unsubscribe">
+		<input type="submit" title="unsubscribe" />
+	  </form>
+
+     </td>
+    </tr>
+    <tr>
+     <td colspan="2">
+		{{ i.text }}
+     </td>
+    </tr>
+   </table>
+
+</td>
+</tr>
+</table>
+</div>
+
+{% endblock %}
+
+{% endblock %}

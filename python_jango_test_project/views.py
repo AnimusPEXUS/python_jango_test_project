@@ -12,4 +12,16 @@ class SubscribtionMng(TemplateView):
 
 
 class NewPost(TemplateView):
-    template_name = 'write_new_post.html'
+    template_name = 'new_post.html'
+
+
+class ViewPost(TemplateView):
+    template_name = 'view_post.html'
+
+
+def subscribe(req):
+    pass
+
+
+def unsubscribe(req):
+    pass

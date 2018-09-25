@@ -18,13 +18,11 @@ from django.urls import path
 
 from . import views
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('<str:username>',
-        views.UserHomeView.as_view()),
-    path('<str:username>/subscribtions',
-        views.SubscribtionMng.as_view()),
-    path('<str:username>/add',
-        views.NewPost.as_view()),
+    path('home/', views.UserHomeView.as_view()),
+    path('new', views.NewPost.as_view()),
+    path('view/<int:uid>', views.ViewPost.as_view()),
+    path('subscribe/<int:uid>', views.subscribe),
+    path('unsubscribe/<int:uid>', views.unsubscribe),
 ]
