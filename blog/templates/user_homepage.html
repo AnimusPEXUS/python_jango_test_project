@@ -23,15 +23,17 @@
 </td>
 </tr>
 
-{% endif %}
+{% endfor %}
 </table>
 </div>
 
 <div class="news-feed">
 <table>
+{% for i in latest_posts %}
  <tr>
   <td>
 
+	
    <table>
     <tr>
      <td>
@@ -62,9 +64,10 @@
 
 </td>
 </tr>
+{% endfor %}
 </table>
 </div>
 
 {% endblock %}
 
-{% endblock %}
+

@@ -1,14 +1,19 @@
 
 from django.contrib import admin
+import django.contrib.auth.views
 from django.urls import path
 
-from blog import views
+import blog.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/', views.UserHomeView.as_view()),
-    path('new', views.NewPost.as_view()),
-    path('view/<int:pid>', views.ViewPost.as_view()),
-    path('subscribe/<int:uid>', views.subscribe),
-    path('unsubscribe/<int:uid>', views.unsubscribe),
+    path('login',
+         django.contrib.auth.views.LoginView.as_view(
+             template_name="login.html")),
+    path('logout', blog.views.logout),
+    path('home', blog.views.UserHomeView.as_view()),
+    path('new', blog.views.NewPost.as_view()),
+    path('view/<int:pid>', blog.views.ViewPost.as_view()),
+    path('subscribe/<int:uid>', blog.views.subscribe),
+    path('unsubscribe/<int:uid>', blog.views.unsubscribe),
 ]
