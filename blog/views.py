@@ -1,9 +1,7 @@
 
 
 from _datetime import datetime
-from symbol import subscript
 
-import django.contrib.auth
 import django.contrib.auth.models
 from django.core import mail
 import django.db.models.signals
@@ -13,8 +11,9 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
 from django.views.generic.base import TemplateView, View
+from django.contrib.messages import get_messages
+from django.contrib import messages
 
-from .forms import subscribe_button_form
 from .models import Subscription, Post
 
 import python_jango_test_project.settings
@@ -25,6 +24,7 @@ class UserHomeView(TemplateView):
     def get(self, request: django.http.HttpRequest):
 
         if not request.user.is_authenticated:
+            messages.error(request, "not authenticated")
             return django.http.HttpResponseRedirect("/login")
 
         this_user_subscriptions = Subscription.objects.filter(
@@ -55,8 +55,8 @@ class UserHomeView(TemplateView):
                 'own_posts': Post.objects.filter(user=request.user).all(),
                 'subscriptions': subscribed_list,
                 'request': request,
-                'subscribe_button_form': subscribe_button_form,
                 'own_id': request.user.id,
+                'messages': get_messages(request),
             }
         )
 
@@ -69,6 +69,7 @@ class NewPost(View):
     def get(self, request: django.http.HttpRequest):
 
         if not request.user.is_authenticated:
+            messages.error(request, "not authenticated")
             return django.http.HttpResponseRedirect("/login")
 
         ret = render(
@@ -76,6 +77,7 @@ class NewPost(View):
             self.template_name,
             {
                 'request': request,
+                'messages': get_messages(request),
             }
         )
         return ret
@@ -98,6 +100,7 @@ class ViewPost(TemplateView):
     def get(self, request: django.http.HttpRequest, pid):
 
         if not request.user.is_authenticated:
+            messages.error(request, "not authenticated")
             return django.http.HttpResponseRedirect("/login")
 
         if not isinstance(pid, str):
@@ -105,6 +108,7 @@ class ViewPost(TemplateView):
 
         p = Post.objects.filter(id=pid).first()
         if p is None:
+            messages.error(request, "post not found")
             return django.http.HttpResponseRedirect('/home')
 
         ret = render(
@@ -112,6 +116,7 @@ class ViewPost(TemplateView):
             self.template_name,
             {
                 'p': p,
+                'messages': get_messages(request),
             }
         )
         return ret
@@ -120,7 +125,14 @@ class ViewPost(TemplateView):
 class LoginPost(View):
 
     def get(self, request):
-        return render(request, 'login.html')
+        ret = render(
+            request,
+            'login.html',
+            {
+                'messages': get_messages(request),
+            }
+        )
+        return ret
 
     def post(self, request):
         django.contrib.auth.login(
@@ -128,7 +140,7 @@ class LoginPost(View):
             request.POST['username'],
             request.POST['password']
         )
-        return django.http.HttpResponseRedirect('/home')
+        return
 
 
 def logout(req: django.http.HttpRequest) -> django.http.HttpResponse:
@@ -144,17 +156,22 @@ def delete(req: django.http.HttpRequest) -> django.http.HttpResponse:
         pid = int(pid)
 
     if not req.user.is_authenticated:
+        messages.error(req, "not authenticated")
         return HttpResponseRedirect("/home")
 
     p = Post.objects.filter(id=pid)
     if p is None:
+        messages.error(req, "post not found")
         return HttpResponseRedirect("/home")
 
     for i in p:
         if i.user != req.user:
+            messages.error(req, "not your post - can't delete")
             return HttpResponseRedirect("/home")
 
         i.delete()
+
+    messages.info(req, "post deleted")
 
     return HttpResponseRedirect("/home")
 
@@ -181,6 +198,10 @@ def subscribe(req: django.http.HttpRequest) -> django.http.HttpResponse:
                 id=uid).first()
             target_sub_user = u
 
+        if target_sub_user is None:
+            messages.error(req, "no such user")
+            return HttpResponseRedirect("/home")
+
         s = Subscription.objects.filter(
             user=req.user,
             subscription=target_sub_user
@@ -192,6 +213,12 @@ def subscribe(req: django.http.HttpRequest) -> django.http.HttpResponse:
                 subscription=target_sub_user
             )
             s.save()
+
+        messages.info(req, "subscribed ok")
+
+    else:
+
+        messages.error(req, "not authenticated")
 
     return HttpResponseRedirect("/home")
 
@@ -218,6 +245,10 @@ def unsubscribe(req: django.http.HttpRequest) -> django.http.HttpResponse:
                 id=uid).first()
             target_sub_user = u
 
+        if target_sub_user is None:
+            messages.error(req, "no such user")
+            return HttpResponseRedirect("/home")
+
         s = Subscription.objects.filter(
             user=req.user,
             subscription=target_sub_user
@@ -225,6 +256,12 @@ def unsubscribe(req: django.http.HttpRequest) -> django.http.HttpResponse:
 
         if s is not None:
             s.delete()
+
+        messages.info(req, "unsubscribed ok")
+
+    else:
+
+        messages.error(req, "not authenticated")
 
     return HttpResponseRedirect("/home")
 
@@ -240,13 +277,15 @@ def work_on_posts_actions_delete(sender, **kwargs):
 
 
 def work_on_posts_actions_x(act, sender, **kwargs):
+
+    if not (python_jango_test_project.settings.
+            PYTHON_JANGO_TEST_PROJECT_EMAIL_POSTING_ENABLED):
+        return
+
     if sender != Post:
         return
 
     try:
-        print("Request finished!:", str(sender))
-        print('kwargs')
-        print(repr(kwargs))
 
         inst = kwargs.get('instance', None)
         if inst is None:

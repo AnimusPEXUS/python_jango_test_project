@@ -44,6 +44,16 @@ body {
 	border: 1px black solid;
 }
 
+#messages {
+	display: block;
+	position: absolute;
+	background: yellow;
+	bottom: 10px;
+	left: 10px;
+	right: 10px;
+	border: solid 3px maroon;
+}
+
 .button-like-link {
 	border: 1px solid black;
 }

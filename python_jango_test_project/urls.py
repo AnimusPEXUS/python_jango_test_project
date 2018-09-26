@@ -2,6 +2,8 @@
 from django.contrib import admin
 import django.contrib.auth.views
 from django.urls import path
+from django.views.generic import RedirectView
+from django.http import HttpResponseRedirect
 
 import blog.views
 
