@@ -119,3 +119,9 @@ STATICFILES_DIRS = [
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+DEFAULT_FROM_EMAIL = 'test@127.0.0.1'
+
+SITE_PREFIX = 'http://127.0.0.1:8000/'

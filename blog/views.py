@@ -1,18 +1,23 @@
 
 
-from django import forms
+from _datetime import datetime
+from symbol import subscript
+
 import django.contrib.auth
+import django.contrib.auth.models
+from django.core import mail
+import django.db.models.signals
+from django.dispatch.dispatcher import receiver
 import django.http
+from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
 from django.views.generic.base import TemplateView, View
 
 from .forms import subscribe_button_form
 from .models import Subscription, Post
-from _datetime import datetime
-from django.http.response import HttpResponseRedirect
-from asyncio.log import logger
-import logging
+
+import python_jango_test_project.settings
 
 
 class UserHomeView(TemplateView):
@@ -222,3 +227,60 @@ def unsubscribe(req: django.http.HttpRequest) -> django.http.HttpResponse:
             s.delete()
 
     return HttpResponseRedirect("/home")
+
+
+@receiver(django.db.models.signals.post_save)
+def work_on_posts_actions_dave(sender, **kwargs):
+    work_on_posts_actions_x('save', sender, **kwargs)
+
+
+@receiver(django.db.models.signals.post_delete)
+def work_on_posts_actions_delete(sender, **kwargs):
+    work_on_posts_actions_x('dele', sender, **kwargs)
+
+
+def work_on_posts_actions_x(act, sender, **kwargs):
+    if sender != Post:
+        return
+
+    try:
+        print("Request finished!:", str(sender))
+        print('kwargs')
+        print(repr(kwargs))
+
+        inst = kwargs.get('instance', None)
+        if inst is None:
+            return
+
+        connection = mail.get_connection()
+
+        subscribers = set()
+        django.contrib.auth.models.User
+        for i in django.contrib.auth.models.User.objects.all():
+            for j in Subscription.objects.filter(subscription=inst.user):
+                if j.user == i:
+                    subscribers.add(i)
+
+        if act == 'save':
+            msg = mail.EmailMessage(
+                '[sitename] {} created new topic: {}'.format(
+                    inst.user.username,
+                    inst.title,
+
+                ),
+                python_jango_test_project.settings.SITE_PREFIX +
+                'view/' + str(i.id),
+            )
+        else:
+            msg = mail.EmailMessage(
+                '[sitename] topic deleted',
+                python_jango_test_project.settings.SITE_PREFIX +
+                'view/' + str(i.id),
+            )
+
+        for i in list(subscribers):
+            if i.email != None:
+                msg.to = [i.email]
+                connection.send_messages([msg])
+    except:
+        pass
