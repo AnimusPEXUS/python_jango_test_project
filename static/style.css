@@ -1,6 +1,6 @@
 body {
-	font: "Go Regular";
-	font-size: 12px;
+	font-family: cursive;
+	font-size: 14px;
 }
 
 #top-table {
@@ -8,19 +8,17 @@ body {
 	position: absolute;
 	border: 1px black solid;
 	top: 1px;
-	height: 20px;
+	height: 30px;
 	left: 1px;
 	right: 1px;
 }
 
 #subscription-list {
-	overflow: scroll;
 	height: 100%;
 	width: 100%;
 }
 
 #news-feed, #own-posts {
-	overflow: scroll;
 	height: 100%;
 	width: 100%;
 }
@@ -30,7 +28,7 @@ body {
 	position: absolute;
 	border: 1px black solid;
 	margin-top: 1px;
-	top: 21px;
+	top: 31px;
 	bottom: 1px;
 	left: 1px;
 	right: 1px;
@@ -42,6 +40,7 @@ body {
 
 .post-table {
 	border: 1px black solid;
+	width:100%;
 }
 
 #messages {
@@ -54,6 +53,6 @@ body {
 	border: solid 3px maroon;
 }
 
-.button-like-link {
+.button-like-link, button {
 	border: 1px solid black;
 }

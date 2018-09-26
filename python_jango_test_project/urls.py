@@ -2,12 +2,12 @@
 from django.contrib import admin
 import django.contrib.auth.views
 from django.urls import path
-from django.views.generic import RedirectView
-from django.http import HttpResponseRedirect
 
 import blog.views
 
+
 urlpatterns = [
+    path('', blog.views.redirecthome),
     path('admin/', admin.site.urls),
     path('login',
          django.contrib.auth.views.LoginView.as_view(
@@ -19,4 +19,5 @@ urlpatterns = [
     path('delete', blog.views.delete),
     path('subscribe', blog.views.subscribe),
     path('unsubscribe', blog.views.unsubscribe),
+    path('mark', blog.views.mark),
 ]

@@ -23,7 +23,7 @@
 	</td>
 	<td>
 		{% if request.user.is_authenticated %}
-		You are logged in as {{ request.user.username }}
+		You are logged in as <strong>{{ request.user.username }}</strong>
 		<a href="/logout">Logout</a>
 		{% else %}
 		You are not authenticated <a href="/login">Login</a>
@@ -31,12 +31,6 @@
 	</td>
 	</tr>
 	</table>
-	
-
-    {% block main_part %}
-    lol, it didn't worked?
-    {% endblock %}
-
-
+    {% block main_part %}{% endblock %}
 </body>
 </html>

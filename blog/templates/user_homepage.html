@@ -11,6 +11,7 @@ Subscribe on somebody
 <form method="post" action="/subscribe">
 	{% csrf_token %}	 	
 	<input type="text" name="username" />
+	<button type="submit">+</button>
 </form>
 
 Subscribed on
@@ -46,7 +47,9 @@ Subscribed posts
    <table class="post-table">
     <tr>
      <td>
-		<a href="view/{{i.id}}">{{ i.title }}</a>
+        {{ '#' }}{{ i.i.id }}
+		<a href="view/{{i.i.id}}">{{ i.i.title }}</a>
+		{% if not i.seen %} <strong>New</strong> {% endif %}
      </td>
      <td>
 
@@ -54,29 +57,36 @@ Subscribed posts
     </tr>
     <tr>
      <td>
-		Date: {{ i.date }} Creator: {{ i.user.username }}
+		Date: {{ i.i.date }} Creator: {{ i.i.user.username }}
      </td>
      <td>
           	
 	  <form method="post" action="/unsubscribe">
 	 	{% csrf_token %}
-		<button class="button-like-link" type="submit" name="uid" value="{{ i.user.id }}">u</button>
+		<button class="button-like-link" type="submit" name="uid" value="{{ i.i.user.id }}">u</button>
 	  </form>
 
-	  {% if own_id == i.user.id  %}
+	  {% if own_id == i.i.user.id  %}
 
 	  <form method="post" action="/delete">
 	 	{% csrf_token %}
-		<button class="button-like-link" type="submit" name="pid" value="{{ i.id }}">d</button>
+		<button class="button-like-link" type="submit" name="pid" value="{{ i.i.id }}">d</button>
 	  </form>
+	  	  
+	  {% endif %}
 	  
+	  {% if not i.seen %}
+	  	<form method="post" action="/mark">
+	 	{% csrf_token %}
+		<button class="button-like-link" type="submit" name="pid" value="{{ i.i.id }}">mark read</button>
+	  	</form>	  	
 	  {% endif %}
 
      </td>
     </tr>
     <tr>
      <td colspan="2">
-		{{ i.text }}
+		{{ i.i.text }}
      </td>
     </tr>
    </table>
@@ -102,6 +112,7 @@ Own posts
    <table class="post-table">
     <tr>
      <td>
+        {{ '#' }}{{ i.id }}
 		<a href="view/{{i.id}}">{{ i.title }}</a>
      </td>
      <td>

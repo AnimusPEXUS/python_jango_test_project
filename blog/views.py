@@ -2,6 +2,8 @@
 
 from _datetime import datetime
 
+from django.db import models
+
 import django.contrib.auth.models
 from django.core import mail
 import django.db.models.signals
@@ -14,7 +16,7 @@ from django.views.generic.base import TemplateView, View
 from django.contrib.messages import get_messages
 from django.contrib import messages
 
-from .models import Subscription, Post
+from .models import Subscription, Post, Seen
 
 import python_jango_test_project.settings
 
@@ -38,13 +40,23 @@ class UserHomeView(TemplateView):
 
             subscribed_list.append(t)
 
+        class Tmp:
+            pass
+
         posts = []
-        for i in Post.objects.all():
+        for i in Post.objects.order_by('date').reverse().all():
             for j in subscribed_list:
                 if i.user == j:
-                    posts.append(i)
+                    seen = False
+                    sr = Seen.objects.filter(user=request.user, post=i).first()
+                    if sr != None:
+                        seen = True
+                    t = Tmp()
+                    t.i = i
+                    t.seen = seen
+                    posts.append(t)
 
-        posts.sort(key=lambda x: x.date)
+        posts.sort(key=lambda x: x.i.date)  # , reverse=True
         subscribed_list.sort(key=lambda x: x.username)
 
         ret = render(
@@ -52,7 +64,7 @@ class UserHomeView(TemplateView):
             'user_homepage.html',
             {
                 'posts': posts,
-                'own_posts': Post.objects.filter(user=request.user).all(),
+                'own_posts': Post.objects.filter(user=request.user).order_by('date').reverse().all(),
                 'subscriptions': subscribed_list,
                 'request': request,
                 'own_id': request.user.id,
@@ -266,6 +278,43 @@ def unsubscribe(req: django.http.HttpRequest) -> django.http.HttpResponse:
     return HttpResponseRedirect("/home")
 
 
+@require_POST
+def mark(req: django.http.HttpRequest) -> django.http.HttpResponse:
+
+    pid = req.POST.get('pid', None)
+    if pid is not None:
+        pid = int(pid)
+
+    if req.user.is_authenticated:
+
+        p = None
+        try:
+            p = Post.objects.get(id=pid)
+        except models.Model.DoesNotExist:
+            messages.error(req, "not found asked post")
+            return HttpResponseRedirect("/home")
+
+        m = Seen.objects.filter(
+            user=req.user,
+            post=p
+        ).first()
+
+        if m is None:
+            m = Seen(
+                user=req.user,
+                post=p
+            )
+            m.save()
+
+        messages.info(req, "subscribed ok")
+
+    else:
+
+        messages.error(req, "not authenticated")
+
+    return HttpResponseRedirect("/home")
+
+
 @receiver(django.db.models.signals.post_save)
 def work_on_posts_actions_dave(sender, **kwargs):
     work_on_posts_actions_x('save', sender, **kwargs)
@@ -323,3 +372,7 @@ def work_on_posts_actions_x(act, sender, **kwargs):
                 connection.send_messages([msg])
     except:
         pass
+
+
+def redirecthome(req):
+    return django.http.HttpResponseRedirect("/home")

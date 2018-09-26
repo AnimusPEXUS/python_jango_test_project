@@ -34,19 +34,7 @@ class Seen(models.Model):
         on_delete=models.CASCADE
     )
 
-    posts = models.ForeignKey(
-        Post,
-        on_delete=models.CASCADE,
-    )
-
-
-class Readed(models.Model):
-    user = models.ForeignKey(
-        django.contrib.auth.models.User,
-        on_delete=models.CASCADE
-    )
-
-    posts = models.ForeignKey(
+    post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
     )
