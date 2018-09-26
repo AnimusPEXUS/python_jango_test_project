@@ -1,0 +1,25 @@
+
+<form method="post" action="/{{ un_v }}subscribe">
+	{% csrf_token %}
+	{% if username %}
+	 {% if prompt %}
+	 username:
+	 {% endif %}
+	
+	 {% if edit %}
+	 <input type="text" name="username" value="{{ username }}">
+	 {% else %}
+	 <input type="hidden" name="username" value="{{ username }}">
+	 {% endif %}
+	{% else %}
+	 {% if prompt %}
+	 uid:
+	 {% endif %}
+	
+	 {% if edit %}
+	 <input type="text" name="uid" value="{{ uid }}">
+	 {% else %}
+	 <input type="hidden" name="uid" value="{{ uid }}">
+	 {% endif %}
+	{% endif %}
+</form>

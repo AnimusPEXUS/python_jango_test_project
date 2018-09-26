@@ -2,12 +2,29 @@
 
 {% block main_part %}
 
+<div id="main-table">
+
 Writting New Post
 
-<form action="/new" method="post">
+<form method="post" action="/new">
 {% csrf_token %}
-{{form}}
-<input type="submit" value="Submit"/>
+<table>
+<tr>
+<td>
+<input type="text" name="title"/>
+</td>
+</tr>
+<tr>
+<td>
+<textarea name="text"></textarea>
+</td>
+</tr>
+<tr>
+<td>
+<button type="submit" >Submit</button>
+</td>
+</tr>
+</table>
 </form>
-
+</div>
 {% endblock %}

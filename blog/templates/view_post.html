@@ -2,26 +2,14 @@
 
 {% block main_part %}
 
-Writting New Post
+<div id="main-table">
 
-<form>
-  <table>
-    <tr>
-      <td>
-       <input type="text" name="title"/>
-      </td>
-    </tr>
-    <tr>
-      <td>
-       <textarea></textarea>
-      </td>
-    </tr>
-    <tr>
-      <td>
-       <input type="submit"/>
-      </td>
-    </tr>
-  </table>
-</form>
+Viewing Post: {{ p.title }}
+Date Written: {{ p.date }}
+Author: {{ p.username }}
+
+<pre>
+{{p.text}}
+</pre>
 
 {% endblock %}

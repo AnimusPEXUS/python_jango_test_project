@@ -5,34 +5,36 @@ import django.contrib.auth.models
 
 
 class Post(models.Model):
-    whos = models.ForeignKey(
+    user = models.ForeignKey(
         django.contrib.auth.models.User,
         on_delete=models.CASCADE
-        )  
+    )
 
-    date = models.DateTimeField() 
-    title = models.TextField() 
+    date = models.DateTimeField()
+    title = models.TextField()
     text = models.TextField()
-    
-    
-class Subscription(models.Model):
-    whos = models.ForeignKey(
-        django.contrib.auth.models.User,        
-        on_delete=models.CASCADE,
-        related_name="user",
-        ) 
 
-    who = models.ManyToManyField(
-        django.contrib.auth.models.User
-        ) 
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        django.contrib.auth.models.User,
+        on_delete=models.CASCADE,
+        related_name="use",
+    )
+
+    subscription = models.ForeignKey(
+        django.contrib.auth.models.User,
+        on_delete=models.CASCADE,
+    )
 
 
 class Seen(models.Model):
-    whos = models.ForeignKey(
+    user = models.ForeignKey(
         django.contrib.auth.models.User,
         on_delete=models.CASCADE
-        ) 
+    )
 
-    what = models.ManyToManyField(
-        Post
-        ) 
+    posts =  models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+    )

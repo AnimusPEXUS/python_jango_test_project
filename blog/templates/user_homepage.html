@@ -1,24 +1,29 @@
 {% extends "index.html" %}
 
 {% block main_part %}
-<div class="individual-sub-control">
-	<form method="post" action="/{{ i.login | escape }}/unsubscribe">
-		<input type="submit" title="unsubscribe" />
-	</form>
-	<form method="post" action="/{{ i.login | escape }}/subscribe">
-		<input type="submit" title="unsubscribe" />
-	</form>
-</div>
+<table id="main-table">
+<tr>
+<td>
 
-<div class="subscription-list">
+<div id="subscription-list">
+  
+Subscribe on somebody 
+<form method="post" action="/subscribe">
+	{% csrf_token %}	 	
+	<input type="text" name="username" />
+</form>
+
+Subscribed on
+
 <table>
 {% for i in subscriptions %}
 
 <tr>
-<td>{{ i.name | escape }}</td>
+<td>{{ i.username }}</td>
 <td>
-	<form method="post" action="/{{ i.login | escape }}/unsubscribe">
-		<input type="submit" title="unsubscribe" />
+	<form method="post" action="/unsubscribe">
+	 	{% csrf_token %}
+		<button class="button-like-link" type="submit" name="uid" value="{{ i.id }}" >x</button>
 	</form>
 </td>
 </tr>
@@ -27,17 +32,21 @@
 </table>
 </div>
 
-<div class="news-feed">
+</td>
+<td>
+
+<div id="news-feed">
+Subscribed posts
 <table>
-{% for i in latest_posts %}
+{% for i in posts %}
  <tr>
   <td>
 
 	
-   <table>
+   <table class="post-table">
     <tr>
      <td>
-		{{ i.title }}
+		<a href="view/{{i.id}}">{{ i.title }}</a>
      </td>
      <td>
 
@@ -45,13 +54,23 @@
     </tr>
     <tr>
      <td>
-		{{ i.date }} {{ i.name }}
+		Date: {{ i.date }} Creator: {{ i.user.username }}
      </td>
      <td>
           	
-	  <form method="post" action="/{{ i.login | escape }}/unsubscribe">
-		<input type="submit" title="unsubscribe" />
+	  <form method="post" action="/unsubscribe">
+	 	{% csrf_token %}
+		<button class="button-like-link" type="submit" name="uid" value="{{ i.user.id }}">u</button>
 	  </form>
+
+	  {% if own_id == i.user.id  %}
+
+	  <form method="post" action="/delete">
+	 	{% csrf_token %}
+		<button class="button-like-link" type="submit" name="pid" value="{{ i.id }}">d</button>
+	  </form>
+	  
+	  {% endif %}
 
      </td>
     </tr>
@@ -68,6 +87,59 @@
 </table>
 </div>
 
+</td>
+<td>
+
+
+<div id="own-posts">
+Own posts
+<table>
+{% for i in own_posts %}
+ <tr>
+  <td>
+
+	
+   <table class="post-table">
+    <tr>
+     <td>
+		<a href="view/{{i.id}}">{{ i.title }}</a>
+     </td>
+     <td>
+
+     </td>
+    </tr>
+    <tr>
+     <td>
+		Date: {{ i.date }} Creator: {{ i.user.username }}
+     </td>
+     <td>
+          	
+	  <form method="post" action="/unsubscribe">
+	 	{% csrf_token %}
+		<button class="button-like-link" type="submit" name="uid" value="{{ i.user.id }}">u</button>
+	  </form>
+
+	  <form method="post" action="/delete">
+	 	{% csrf_token %}
+		<button class="button-like-link" type="submit" name="pid" value="{{ i.id }}">d</button>
+	  </form>
+
+     </td>
+    </tr>
+    <tr>
+     <td colspan="2">
+		{{ i.text }}
+     </td>
+    </tr>
+   </table>
+
+</td>
+</tr>
+{% endfor %}
+</table>
+</div>
 {% endblock %}
 
-
+</td>
+</tr>
+</table>

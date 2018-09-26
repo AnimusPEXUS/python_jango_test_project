@@ -1,18 +1,28 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
-    <link rel="stylesheet" href="style.css">
-    <title>{# TODO {% block title %}Blog{% endblock %} #}</title>
+    <link rel="stylesheet" href="{% static "style.css" %}">
+    <title>{# TODO {% block title %}Blog{% endblock %} #}</title>    
 </head>
 
 <body>
 
-	<div>Navigation <a href="/home">Home</a> | <a href="/new">Add Post</a></div>
-
-	<div>
-		You are logged in as 
-		( <a href="/login">Login</a> | <a href="/logout">Logout</a> )
-	</div>
+	<table id="top-table">
+	<tr>
+	<td>
+	Navigation <a href="/home">Home</a> | <a href="/new">Add Post</a>
+	</td>
+	<td>
+		{% if request.user.is_authenticated %}
+		You are logged in as {{ request.user.username }}
+		<a href="/logout">Logout</a>
+		{% else %}
+		You are not authenticated <a href="/login">Login</a>
+		{% endif %}
+	</td>
+	</tr>
+	</table>
 	
 
     {% block main_part %}

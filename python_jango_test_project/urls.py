@@ -14,6 +14,7 @@ urlpatterns = [
     path('home', blog.views.UserHomeView.as_view()),
     path('new', blog.views.NewPost.as_view()),
     path('view/<int:pid>', blog.views.ViewPost.as_view()),
-    path('subscribe/<int:uid>', blog.views.subscribe),
-    path('unsubscribe/<int:uid>', blog.views.unsubscribe),
+    path('delete', blog.views.delete),
+    path('subscribe', blog.views.subscribe),
+    path('unsubscribe', blog.views.unsubscribe),
 ]
